@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>엔젤플러스 | PG 선결제·실시간 정산 플랫폼</title>
+  <meta name="description" content="PG를 통한 안전한 선결제, 업계 최저 수수료, 카드결제 후 약 20분 내 실시간 정산/입금. 사업자 유무와 신용등급과 무관하게 간편 개설 가능한 결제대행 플랫폼." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* Light, future-forward (Toss-like) palette */
+      --bg:#f5f7fb;             /* page bg */
+      --bg-soft:#eef2f8;        /* section bg */
+      --card:#ffffff;           /* card */
+      --text:#0b1220;           /* primary text (near-black navy) */
+      --muted:#687086;          /* secondary text */
+      --primary:#0064ff;        /* Toss blue */
+      --primary-2:#2b77ff;      /* brighter hover */
+      --accent:#00c2ff;         /* cyan accent */
+      --ok:#22c55e; --warn:#f59e0b; --danger:#ef4444;
+      --radius:18px;
+      --shadow: 0 10px 30px rgba(11,18,32,.08), 0 2px 10px rgba(11,18,32,.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Pretendard, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      line-height:1.7; font-size:17px; scroll-behavior:smooth;
+    }
+    a{color:var(--primary); text-decoration:none}
+    .container{width:min(1200px,92vw); margin:0 auto}
+
+    /* Header */
+    header{
+      position:fixed; inset:0 0 auto 0; height:72px; z-index:60;
+      backdrop-filter: saturate(150%) blur(10px);
+      background:rgba(255,255,255,.7);
+      border-bottom:1px solid rgba(11,18,32,.06);
+    }
+    .nav{display:flex; align-items:center; justify-content:space-between; height:72px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+    .brand .logo{width:34px;height:34px; border-radius:10px; background:conic-gradient(from 180deg, var(--primary), var(--accent), #7c3aed, var(--primary)); box-shadow:0 6px 20px rgba(0,100,255,.18)}
+    .links{display:flex; gap:22px; align-items:center}
+    .links a{position:relative; color:var(--muted); font-weight:700; display:inline-flex; align-items:center; height:44px}
+    .links a:hover{color:var(--text)}
+    .links a::after{content:""; position:absolute; left:0; right:0; bottom:-10px; height:2px; border-radius:2px; background:linear-gradient(90deg,var(--primary),var(--accent)); transform:scaleX(0); transform-origin:left; transition:transform .25s ease}
+    .links a:hover::after{transform:scaleX(1)}
+          .nav a.btn{padding:10px 14px; border-radius:12px; background:var(--primary); color:#fff; font-weight:800; box-shadow:0 8px 20px rgba(0,100,255,.25); display:inline-flex; align-items:center; height:40px}
+      .nav a.btn:hover{background:var(--primary-2)}
+    .nav *{line-height:1}
+    .brand span{display:inline-flex; align-items:center; height:44px}
+
+    /* Progress bar */
+    #progress{position:fixed; inset:72px 0 auto 0; height:3px; z-index:55}
+    #progress span{display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--primary), var(--accent))}
+
+    /* Hero with background video */
+    .hero{position:relative; min-height:90svh; display:grid; place-items:center; padding-top:72px; overflow:hidden; isolation:isolate}
+    .hero video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:-2; filter:brightness(.7) saturate(110%)}
+    .hero::after{content:""; position:absolute; inset:auto 0 0 0; height:40%; background:linear-gradient(0deg, rgba(245,247,251,1), rgba(245,247,251,0)); z-index:-1}
+    .hero .scrim{position:absolute; inset:0; z-index:-1; background:linear-gradient(180deg, rgba(245,247,251,.95) 0%, rgba(245,247,251,.65) 22%, rgba(245,247,251,0) 60%)}
+    .hero-inner{display:grid; gap:14px; text-align:center; align-items:center; justify-items:center; padding:64px 0 84px; width:min(1100px,92vw)}
+    .kicker{display:inline-flex; gap:8px; align-items:center; margin:0; padding:6px 10px; border-radius:999px; background:#fff; color:var(--primary); font-weight:800; font-size:13px; box-shadow:0 1px 0 rgba(11,18,32,.06)}
+          .title{font-size: clamp(40px, 6vw, 76px); line-height:1.06; margin:0; font-weight:900; letter-spacing:-.3px}
+          .subtitle{color:#475069; font-size: clamp(17px, 2vw, 22px); margin:10px 0 0}
+    .cta{display:flex; gap:12px; flex-wrap:wrap; margin-top:6px}
+    .btn{display:inline-flex; align-items:center; gap:10px; border:none; cursor:pointer; padding:14px 18px; border-radius:14px; font-weight:900; letter-spacing:.2px; transition:all .3s cubic-bezier(.2,.6,.2,1)}
+    .btn.primary{background:var(--primary); color:#fff; box-shadow:0 12px 26px rgba(0,100,255,.22)}
+    .btn.ghost{background:#fff; color:var(--text); border:1px solid rgba(11,18,32,.08)}
+    .btn:hover{transform:translateY(-3px) scale(1.02); box-shadow:0 16px 32px rgba(0,100,255,.3)}
+    section{scroll-margin-top:96px}
+
+        /* Feature cards (standalone classes) */
+    .fcards{display:grid; grid-template-columns:repeat(2,1fr); gap:40px 32px; margin-top:26px}
+    .fcard{display:flex; flex-direction:column; gap:12px; padding:26px; background:var(--card); border:1px solid rgba(11,18,32,.08); border-radius:20px; box-shadow:var(--shadow); transition:all .3s cubic-bezier(.2,.6,.2,1)}
+    .fcard:hover{transform:translateY(-8px) scale(1.02); box-shadow:0 24px 48px rgba(11,18,32,.15); border-color:rgba(0,100,255,.2)}
+    .fcard h3{margin:0 0 6px; font-size:28px}
+    .fcard p{margin:0; color:var(--muted); font-size:26px}
+    .ficon{width:64px; height:64px; object-fit:contain}
+
+    /* Sections */
+    section{padding:120px 0; background:var(--bg)}
+          .section-title{font-size:clamp(36px,4.4vw,56px); margin:0 0 10px; font-weight:900; letter-spacing:-.2px}
+          .section-sub{color:var(--muted); margin:0 0 14px; font-size:clamp(18px,2vw,22px)}
+    .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+    .grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:28px}
+    .card{background:var(--card); border:1px solid rgba(11,18,32,.08); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow); transition:all .3s cubic-bezier(.2,.6,.2,1)}
+    .card:hover{transform:translateY(-8px) scale(1.02); box-shadow:0 24px 48px rgba(11,18,32,.15); border-color:rgba(0,100,255,.2)}
+    .card h3{margin:0 0 6px}
+    .list{margin:10px 0 0; padding:0 0 0 18px}
+
+    /* Feature rows (card + description) */
+    .feature-row{display:grid; grid-template-columns:320px 1fr; gap:24px; align-items:center}
+    .feature-row+.feature-row{margin-top:20px}
+    .feature-mini{height:160px; display:grid; place-items:center; font-weight:900; font-size:18px; color:var(--text)}
+    .feature-desc h3{margin:0 0 8px; font-size:22px}
+    .feature-desc p{margin:0; color:var(--muted)}
+
+    /* Explain (non-card, large copy) */
+    .explain{padding:140px 0}
+    .explain .cols{display:grid; grid-template-columns:1.2fr 1fr; gap:40px; align-items:start}
+          .explain h2{font-size:clamp(36px,5vw,72px); line-height:1.08; margin:0 0 12px; font-weight:900; letter-spacing:-.4px}
+          .explain .lede{font-size:clamp(18px,2.6vw,22px); color:#3b4357; margin:0 0 20px}
+    .explain .muted{color:var(--muted)}
+    .explain .divider{height:1px; background:rgba(11,18,32,.08); margin:28px 0}
+    .points{margin:0; padding:0; list-style:none; display:grid; gap:12px}
+    .points li{display:flex; gap:12px; align-items:flex-start; font-size:26px}
+          .points .dot{width:10px; height:10px; flex:0 0 10px; border-radius:999px; margin-top:8px; background:linear-gradient(90deg,var(--primary),var(--accent))}
+
+    /* Partners */
+    .logos{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+    .logo-card{aspect-ratio:16/9; border-radius:14px; background:#fff; border:1px dashed rgba(11,18,32,.18); display:grid; place-items:center; color:var(--muted); transition:all .3s cubic-bezier(.2,.6,.2,1)}
+    .logo-card:hover{transform:translateY(-6px) scale(1.02); border-color:rgba(0,100,255,.4); box-shadow:0 12px 24px rgba(11,18,32,.1)}
+
+    /* FAQ */
+    details{background:#fff; border:1px solid rgba(11,18,32,.1); border-radius:14px; padding:14px 18px; transition:all .3s cubic-bezier(.2,.6,.2,1)}
+    details[open]{background:#fff; border-color:rgba(0,100,255,.25); transform:translateY(-2px); box-shadow:0 8px 16px rgba(11,18,32,.08)}
+    details+details{margin-top:12px}
+    summary{cursor:pointer; font-weight:800}
+
+    /* Contact */
+    form{display:grid; gap:12px}
+    input,select,textarea{width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(11,18,32,.14); background:#fff; color:var(--text); outline:none; transition:border-color .2s ease, box-shadow .2s ease}
+    input:focus,select:focus,textarea:focus{border-color:rgba(0,100,255,.6); box-shadow:0 0 0 6px rgba(0,100,255,.12)}
+
+    .footer{padding:48px 0 72px; color:#6b7280; font-size:14px; border-top:1px solid rgba(11,18,32,.06); background:var(--bg-soft)}
+
+    /* Reveal animations */
+    .reveal{opacity:0; transform:translateY(30px)}
+    .reveal.show{opacity:1; transform:none; transition:opacity .8s ease, transform .8s cubic-bezier(.2,.6,.2,1)}
+
+    /* Stagger children */
+    .stagger>*{opacity:0; transform:translateY(20px); font-size:26px;}
+    .stagger.in>*{opacity:1; transform:none; transition:opacity .6s ease, transform .6s cubic-bezier(.2,.6,.2,1)}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .grid-3{grid-template-columns:1fr 1fr}
+      .logos{grid-template-columns:1fr 1fr}
+      .explain .cols{grid-template-columns:1fr}
+      .fcards{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:640px){
+      .grid-2,.grid-3{grid-template-columns:1fr}
+      .hero-inner{padding:48px 0 64px}
+      header{height:64px}
+      .nav{height:64px}
+      #progress{inset:64px 0 auto 0}
+      .fcards{grid-template-columns:1fr; gap:22px}
+      .fcard{padding:16px}
+      .ficon{width:48px; height:48px}
+      .fcard h3{font-size:19px}
+      .fcard p{font-size:17px}
+      .points li{font-size:17px}
+      .stagger>*{font-size:inherit}
+      #features .section-sub{font-size:17px !important}
+      #features .section-title{font-size:26px !important; line-height:1.2}
+      .explain h2{font-size:28px}
+      .explain .lede{font-size:17px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <span>ANGEL+ (엔젤플러스)</span>
+      </div>
+      <nav class="links">
+        <a href="#features">특장점</a>
+        <a href="#how">PG란?</a>
+        <a href="#ops">운영/교육</a>
+        <a href="#partners">협력사</a>
+        <a href="#contact" class="btn">문의하기</a>
+      </nav>
+    </div>
+  </header>
+  <div id="progress" aria-hidden="true"><span></span></div>
+
+  <!-- HERO with background video -->
+  <section class="hero" id="home" aria-label="히어로">
+    <video id="bgvid" autoplay muted loop playsinline poster="" preload="auto">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="hero-inner container reveal" data-anim="fade-up">
+      <span class="kicker">PG 선결제 • 실시간 정산 • 업계 최저 수수료</span>
+      <h1 class="title">기다릴 필요 없는 빠르고 안전한 정산</h1>
+      <div class="cta">
+        <a class="btn primary" href="#contact">지금 문의하기</a>
+        <a class="btn ghost" href="#intro-extras">자세히 보기</a>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 왜 엔젤플러스인가 -->
+  <section id="features" class="reveal" data-anim="fade-up" style="background:var(--bg-soft); margin:0; padding:120px 0">
+    <div class="container">
+      <h2 class="section-title" style="font-size:clamp(36px,4.8vw,60px);">왜 엔젤플러스인가</h2>
+      <p class="section-sub" style="font-size:30px">PG를 통한 <strong>안전한 선결제, 빠른 현금 유동성, 투명한 정산 시스템</strong>까지 한 번에.</p>
+
+      <div class="fcards stagger" id="featuresCards">
+        <div class="fcard">
+          <img class="ficon" src="https://static.toss.im/icons/png/4x/icon-alarm-3.png" alt="">
+          <h3>실시간 정산</h3>
+          <p>카드결제 후 <strong>약 20분 내 입금</strong>. 업종 제한 없이 <br/>적용되고 기존 VAN과 병행 사용도 가능합니다.</p>
+        </div>
+        <div class="fcard">
+          <img class="ficon" src="https://static.toss.im/icons/png/4x/icon-credit-grade-up-2.png" alt="">
+          <h3>최저 수수료</h3>
+          <p>업계 최저 수준의 수수료로 초기 비용 부담을<br/> 줄이고 안정적으로 시작하세요. <br/><strong>무점포·비대면 수기결제 지원</strong>.</p>
+        </div>
+        <div class="fcard">
+          <img class="ficon" src= "https://static.toss.im/icons/png/4x/icon-credit-grade-check-2.png" alt="">
+          <h3>투명한 정산</h3>
+          <p>1원 단위까지 투명한 전산/정산 시스템. <br/><strong>계정별 매출·지급내역을 명확하게 제공</strong>합니다.</p>
+        </div>
+        <div class="fcard">
+          <img class="ficon" src="https://static.toss.im/icons/png/4x/icon-bulb-2.png" alt="">
+          <h3>간편 개설</h3>
+          <p>사업자 유무·신용등급과 무관하게 간편 가입. <br/><strong>비대면 수기결제 및 기존 VAN 병행 지원</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PG & 차별점: 큰 설명 (비카드) -->
+  <section id="how" class="explain reveal" data-anim="fade-up" style="background:var(--bg); margin:0">
+    <div class="container">
+      <div class="row">
+        <div>
+          <h2>PG란 무엇인가</h2>
+          <p class="lede">PG(Payment Gateway)는 <strong>대표가맹점 자격으로 카드 거래를 대행</strong>하고, 카드사로부터 발생한 매출 대금을 취합·정산하여 판매자(가맹점) 계좌로 입금하는 <strong>결제 인프라</strong>입니다.</p>
+          <ul class="points">
+            <li><span class="dot" aria-hidden="true"></span><div>온라인·오프라인을 잇는 통합 결제 처리</div></li>
+            <li><span class="dot" aria-hidden="true"></span><div>간편 연동/관리 시스템, 매출·취소·환불 관리</div></li>
+            <li><span class="dot" aria-hidden="true"></span><div>가맹점/고객의 편의성과 보안 기준 충족</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 운영/교육 -->
+  <section id="ops" class="explain reveal" data-anim="fade-up" style="background:var(--bg-soft); margin:0">
+    <div class="container">
+      <h2 class="section-title">엔젤 플러스는 지원합니다!</h2>
+      <p class="lede">엔젤플러스는 <strong>안정적인 정산 운영부터 전문 교육, 마케팅·전산까지</strong><br/> 비즈니스 성장에 필요한 전 과정을 동반합니다.</p>
+      <div class="divider"></div>
+
+      <div class="stagger">
+        <div>
+          <h3>정산 프로그램 운영</h3>
+          <p>전산 프로그램·단독 서버를 통해 매출과 수당을 투명하게 관리합니다.</p>
+          <ul class="points">
+            <li><span class="dot" aria-hidden="true"></span><div>1원 단위 오차 최소화 지향</div></li>
+            <li><span class="dot" aria-hidden="true"></span><div>계정별 매출·가맹점·지급률 확인</div></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>교육 & 세미나</h3>
+          <p>PG 이해부터 세금/보상 플랜까지 정기 교육과 세미나를 운영합니다.</p>
+          <ul class="points">
+            <li><span class="dot" aria-hidden="true"></span><div>비사업자/사업자/법인 대상 실무형 커리큘럼</div></li>
+            <li><span class="dot" aria-hidden="true"></span><div>직접 운영사만이 제공 가능한 전문 교육</div></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>마케팅 & 전산 지원</h3>
+          <p>보상 플랜, 후원 마케팅, 전산 교육/독립 서버 제공까지 지원합니다.</p>
+          <ul class="points">
+            <li><span class="dot" aria-hidden="true"></span><div>합리적 세금 처리</div></li>
+            <li><span class="dot" aria-hidden="true"></span><div>독립 운영사(지사단) 출범 지원</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 협력사 -->
+  <section id="partners" class="reveal" data-anim="fade-up" style="background:var(--bg); margin:0">
+    <div class="container">
+      <h2 class="section-title">협력사</h2>
+      <p class="section-sub">전자금융 핀테크, 제조·유통, 광고디자인, 주차정산 시스템 등과 함께 성장합니다.</p>
+      <div class="logos stagger">
+        <div class="logo-card">전자금융 핀테크</div>
+        <div class="logo-card">(주) 아인셀</div>
+        <div class="logo-card">달콤스킨</div>
+        <div class="logo-card">스마트 하이패스 주차정산</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="reveal" data-anim="fade-up" style="background:var(--bg-soft); margin:0">
+    <div class="container">
+      <h2 class="section-title">자주 묻는 질문</h2>
+      <details class="card"><summary>사업자등록증이 없어도 이용할 수 있나요?</summary><p>가능합니다. 주민등록증만으로 간편 가입이 가능하며 신용등급과 무관하게 개설을 지원합니다.</p></details>
+      <details class="card"><summary>정산은 얼마나 걸리나요?</summary><p>카드결제 후 약 20분 내 실시간 정산/입금(또는 당일 정산)됩니다. 업종/조건에 따라 일부 차이는 있을 수 있습니다.</p></details>
+      <details class="card"><summary>기존 VAN 단말과 함께 사용해도 되나요?</summary><p>네. 기존 VAN과 병행이 가능합니다.</p></details>
+      <details class="card"><summary>수수료와 세금 처리는 어떻게 되나요?</summary><p>업계 최저 수준 수수료 체계를 제공합니다. 수당에 대한 세금은 합리적 기준으로 투명하게 처리합니다.</p></details>
+    </div>
+  </section>
+
+  <!-- 문의 -->
+  <section id="contact" class="reveal" data-anim="fade-up" style="background:var(--bg); margin:0">
+    <div class="container">
+      <h2 class="section-title">문의하기</h2>
+      <p class="section-sub">간단한 정보를 남겨주시면 담당자가 빠르게 연락드립니다.</p>
+      <form id="lead">
+        <div class="grid-2">
+          <input type="text" name="name" placeholder="성함" required />
+          <input type="tel" name="phone" placeholder="연락처(숫자만)" required />
+        </div>
+        <div class="grid-2">
+          <select name="biz" required>
+            <option value="">사업 유형 선택</option>
+            <option>개인(비사업자)</option>
+            <option>개인사업자</option>
+            <option>법인</option>
+            <option>기타/검토 중</option>
+          </select>
+          <select name="usecase" required>
+            <option value="">이용 목적</option>
+            <option>온라인 쇼핑몰</option>
+            <option>방문판매/프리랜서</option>
+            <option>오프라인 매장</option>
+            <option>기존 VAN 병행</option>
+          </select>
+        </div>
+        <textarea name="msg" rows="5" placeholder="문의 내용(예: 예상 월 매출, 희망 정산 주기, 도입 일정 등)"></textarea>
+        <button class="btn primary" type="submit">제출하기</button>
+        <p id="result" style="margin:8px 0 0; color:#6b7280"></p>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap">
+      <div>© <span id="y"></span> ANGEL+ (엔젤플러스)</div>
+      <div>정책 · 이용약관 · 개인정보처리방침</div>
+    </div>
+  </footer>
+
+  <script>
+    // 연도
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // 폼 전송 (데모)
+    const form = document.getElementById('lead');
+    const result = document.getElementById('result');
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      try{
+        // const r = await fetch('https://your-endpoint.example/lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+        // if(!r.ok) throw new Error('전송 오류');
+        await new Promise(r=>setTimeout(r,600));
+        result.textContent = '전송되었습니다. 담당자가 곧 연락드립니다.';
+        form.reset();
+      }catch(err){
+        result.textContent = '전송에 실패했습니다. 연락처로 다시 시도해 주세요.';
+      }
+    });
+
+    // iOS 자동재생 보조
+    const vid = document.getElementById('bgvid');
+    if(vid){
+      const tryPlay = ()=>vid.play().catch(()=>{});
+      document.addEventListener('visibilitychange', tryPlay, {passive:true});
+      window.addEventListener('load', tryPlay, {once:true, passive:true});
+    }
+
+    // Reveal on scroll
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const io = !prefersReduced && 'IntersectionObserver' in window ? new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ 
+        if(e.isIntersecting){ 
+          e.target.classList.add('show'); 
+          io.unobserve(e.target);
+        } 
+      });
+    },{ threshold: .1, rootMargin: '0px 0px -50px 0px' }) : null;
+    document.querySelectorAll('.reveal').forEach(el=> io ? io.observe(el) : el.classList.add('show'));
+
+    // Scroll progress
+    const bar = document.querySelector('#progress span');
+    const setProgress = ()=>{
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      bar.style.width = (scrolled*100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', setProgress, {passive:true});
+    window.addEventListener('load', setProgress, {once:true});
+
+    // stagger
+    const setupStagger = (root)=>{
+      const parent = typeof root==='string' ? document.querySelector(root) : root;
+      if(!parent) return;
+      [...parent.children].forEach((el,i)=>{
+        el.style.transition = 'opacity .8s ease, transform .8s cubic-bezier(.2,.6,.2,1)';
+        el.style.transitionDelay = `${i*120}ms`;
+      });
+    };
+    document.querySelectorAll('.stagger').forEach(setupStagger);
+    const io2 = !prefersReduced && 'IntersectionObserver' in window ? new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add('in');
+          io2.unobserve(e.target);
+        }
+      });
+    },{threshold:.15}) : null;
+    document.querySelectorAll('.stagger').forEach(el=> io2 ? io2.observe(el) : el.classList.add('in'));
+
+    // 부드러운 앵커 스크롤
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', (e)=>{
+        const id=a.getAttribute('href');
+        const el=document.querySelector(id);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+      })
+    });
+  </script>
+</body>
+</html>
